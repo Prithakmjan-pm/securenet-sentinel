@@ -1,0 +1,219 @@
+{
+  "alerts": [
+    {
+      "id": "A001",
+      "timestamp": "04-Sep-2026 08:35",
+      "type": "Authentication",
+      "target": "ram.shrestha",
+      "source": "Login System",
+      "description": "Multiple failed login attempts followed by a successful login from a new location",
+      "status": "New",
+      "logs": [
+        {"id": "L001", "timestamp": "04-Sep-2026 08:28", "event": "Failed Login", "details": "Login attempt failed from new IP location"},
+        {"id": "L002", "timestamp": "04-Sep-2026 08:30", "event": "Failed Login", "details": "Second login attempt failed"},
+        {"id": "L003", "timestamp": "04-Sep-2026 08:32", "event": "Failed Login", "details": "Third login attempt failed"},
+        {"id": "L004", "timestamp": "04-Sep-2026 08:35", "event": "Successful Login", "details": "Login succeeded from the same new location"},
+        {"id": "L005", "timestamp": "04-Sep-2026 08:40", "event": "File Access", "details": "User accessed normal project documents"}
+      ]
+    },
+    {
+      "id": "A002",
+      "timestamp": "04-Sep-2026 09:10",
+      "type": "Authentication",
+      "target": "mina.karki",
+      "source": "Login System",
+      "description": "Successful login from a device not previously associated with the user",
+      "status": "New",
+      "logs": [
+        {"id": "L006", "timestamp": "04-Sep-2026 09:10", "event": "Successful Login", "details": "Login from previously unseen device"},
+        {"id": "L007", "timestamp": "04-Sep-2026 09:14", "event": "Normal Activity", "details": "User accessed regular work applications"}
+      ]
+    },
+    {
+      "id": "A003",
+      "timestamp": "04-Sep-2026 09:42",
+      "type": "Endpoint",
+      "target": "FIN-LAP-07",
+      "source": "Endpoint Monitoring",
+      "description": "Security tool detected an unusual executable attempting to run",
+      "status": "New",
+      "logs": [
+        {"id": "L008", "timestamp": "04-Sep-2026 09:42", "event": "Application Start", "details": "Unknown executable attempted to start"},
+        {"id": "L009", "timestamp": "04-Sep-2026 09:43", "event": "Security Block", "details": "Endpoint protection blocked the executable"},
+        {"id": "L010", "timestamp": "04-Sep-2026 09:46", "event": "User Activity", "details": "No further unusual activity detected"}
+      ]
+    },
+    {
+      "id": "A004",
+      "timestamp": "04-Sep-2026 10:15",
+      "type": "Data Access",
+      "target": "shared-finance-drive",
+      "source": "File Access Logs",
+      "description": "Large number of finance files accessed within a short period",
+      "status": "New",
+      "logs": [
+        {"id": "L011", "timestamp": "04-Sep-2026 10:10", "event": "File Access", "details": "42 finance files opened within five minutes"},
+        {"id": "L012", "timestamp": "04-Sep-2026 10:13", "event": "File Access", "details": "Additional files downloaded to workstation"}
+      ]
+    },
+    {
+      "id": "A005",
+      "timestamp": "04-Sep-2026 11:20",
+      "type": "Authentication",
+      "target": "hari.rai",
+      "source": "Login System",
+      "description": "Five failed login attempts with no successful login",
+      "status": "New",
+      "logs": [
+        {"id": "L013", "timestamp": "04-Sep-2026 11:15", "event": "Failed Login", "details": "First failed password attempt"},
+        {"id": "L014", "timestamp": "04-Sep-2026 11:20", "event": "Failed Login", "details": "Fifth failed password attempt"},
+        {"id": "L015", "timestamp": "04-Sep-2026 11:25", "event": "No Activity", "details": "No successful login followed"}
+      ]
+    },
+    {
+      "id": "A006",
+      "timestamp": "04-Sep-2026 12:05",
+      "type": "Email",
+      "target": "sita.thapa",
+      "source": "Email Security",
+      "description": "User reported a suspicious email asking for account verification",
+      "status": "New",
+      "logs": [
+        {"id": "L016", "timestamp": "04-Sep-2026 12:05", "event": "Email Received", "details": "Message asked user to verify account information using an external link"},
+        {"id": "L017", "timestamp": "04-Sep-2026 12:08", "event": "User Report", "details": "User reported the message without opening the link"}
+      ]
+    },
+    {
+      "id": "A007",
+      "timestamp": "04-Sep-2026 13:30",
+      "type": "Network",
+      "target": "WEB-SRV-01",
+      "source": "Network Monitoring",
+      "description": "Unusual increase in outbound network traffic detected",
+      "status": "New",
+      "logs": [
+        {"id": "L018", "timestamp": "04-Sep-2026 13:25", "event": "Network Activity", "details": "Outbound traffic increased above the normal range"},
+        {"id": "L019", "timestamp": "04-Sep-2026 13:35", "event": "System Activity", "details": "Scheduled backup job running"}
+      ]
+    },
+    {
+      "id": "A008",
+      "timestamp": "04-Sep-2026 14:12",
+      "type": "Account Activity",
+      "target": "admin.ops",
+      "source": "Identity Monitoring",
+      "description": "Administrative account used outside normal working hours",
+      "status": "New",
+      "logs": [
+        {"id": "L020", "timestamp": "04-Sep-2026 22:15", "event": "Admin Login", "details": "Administrative account login detected"},
+        {"id": "L021", "timestamp": "04-Sep-2026 22:20", "event": "Configuration View", "details": "System configuration pages accessed"}
+      ]
+    },
+    {
+      "id": "A009",
+      "timestamp": "04-Sep-2026 15:45",
+      "type": "Endpoint",
+      "target": "HR-LAP-03",
+      "source": "Endpoint Monitoring",
+      "description": "Several failed attempts to access restricted folders",
+      "status": "New",
+      "logs": [
+        {"id": "L022", "timestamp": "04-Sep-2026 15:40", "event": "Access Denied", "details": "Restricted finance folder access denied"},
+        {"id": "L023", "timestamp": "04-Sep-2026 15:43", "event": "Access Denied", "details": "Second restricted folder access denied"}
+      ]
+    },
+    {
+      "id": "A010",
+      "timestamp": "04-Sep-2026 16:20",
+      "type": "Email",
+      "target": "support@securenet.demo",
+      "source": "Email Security",
+      "description": "High number of similar suspicious messages received by employees",
+      "status": "New",
+      "logs": [
+        {"id": "L024", "timestamp": "04-Sep-2026 16:10", "event": "Email Received", "details": "Similar suspicious message received by multiple employees"}
+      ]
+    },
+    {
+      "id": "A011",
+      "timestamp": "05-Sep-2026 08:25",
+      "type": "Authentication",
+      "target": "bikash.lama",
+      "source": "Login System",
+      "description": "Successful login from regular office device after two failed attempts",
+      "status": "New",
+      "logs": [
+        {"id": "L025", "timestamp": "05-Sep-2026 08:20", "event": "Failed Login", "details": "User entered an incorrect password twice"},
+        {"id": "L026", "timestamp": "05-Sep-2026 08:25", "event": "Successful Login", "details": "User logged in from known office device"}
+      ]
+    },
+    {
+      "id": "A012",
+      "timestamp": "05-Sep-2026 09:50",
+      "type": "Data Access",
+      "target": "HR-SharedDrive",
+      "source": "File Access Logs",
+      "description": "Employee records accessed by an account that normally does not use the HR drive",
+      "status": "New",
+      "logs": [
+        {"id": "L027", "timestamp": "05-Sep-2026 09:45", "event": "File Access", "details": "Non-HR account accessed employee record folder"},
+        {"id": "L028", "timestamp": "05-Sep-2026 09:50", "event": "File Download", "details": "Three employee files downloaded"}
+      ]
+    }
+  ],
+
+  "user_reference": {
+    "ram.shrestha":  {"department": "Sales",        "role": "Sales Executive",       "access_level": "Standard",                  "working_hours": "09:00 to 18:00"},
+    "mina.karki":    {"department": "HR",           "role": "HR Officer",            "access_level": "Sensitive HR Access",       "working_hours": "09:00 to 18:00"},
+    "hari.rai":      {"department": "Operations",   "role": "Operations Assistant",  "access_level": "Standard",                  "working_hours": "09:00 to 18:00"},
+    "sita.thapa":    {"department": "Finance",      "role": "Finance Officer",       "access_level": "Sensitive Finance Access",  "working_hours": "09:00 to 18:00"},
+    "bikash.lama":   {"department": "Support",      "role": "Support Executive",     "access_level": "Standard",                  "working_hours": "08:00 to 17:00"},
+    "admin.ops":     {"department": "IT Operations","role": "System Administrator",  "access_level": "Administrative",            "working_hours": "On-call access permitted"},
+    "nisha.sharma":  {"department": "Marketing",    "role": "Marketing Executive",   "access_level": "Standard",                  "working_hours": "09:00 to 18:00"}
+  },
+
+  "asset_reference": {
+    "FIN-LAP-07":            {"type": "Finance Laptop",     "importance": "High",   "sensitivity": "Confidential",   "notes": "Used for finance processing"},
+    "HR-LAP-03":             {"type": "HR Laptop",          "importance": "High",   "sensitivity": "Confidential",   "notes": "Has access to employee information"},
+    "WEB-SRV-01":            {"type": "Web Server",         "importance": "High",   "sensitivity": "Internal / Public", "notes": "Supports company website"},
+    "shared-finance-drive":  {"type": "Shared Drive",       "importance": "High",   "sensitivity": "Confidential",   "notes": "Contains financial documents"},
+    "HR-SharedDrive":        {"type": "Shared Drive",       "importance": "High",   "sensitivity": "Confidential",   "notes": "Contains employee records"},
+    "Employee Login System": {"type": "Identity System",    "importance": "High",   "sensitivity": "Sensitive",      "notes": "Used by all employees"},
+    "Email System":          {"type": "Communication System","importance": "Medium","sensitivity": "Internal",       "notes": "Used for company communication"}
+  },
+
+  "severity_reference": {
+    "Low":      "Activity appears unusual but there is little evidence of harmful impact",
+    "Medium":   "Suspicious activity exists and further investigation is recommended",
+    "High":     "Strong evidence of unauthorized access, sensitive data exposure, or significant business risk",
+    "Critical": "Evidence suggests major compromise, widespread impact, or immediate risk to important systems or sensitive information"
+  },
+
+  "risk_factors": [
+    "Type of activity",
+    "Affected account or system",
+    "Access level",
+    "Data sensitivity",
+    "Strength of available evidence",
+    "Normal user behaviour",
+    "Normal working hours",
+    "Possible business explanation",
+    "Potential operational impact",
+    "Potential exposure of confidential information"
+  ],
+
+  "escalation_rules": [
+    {"situation": "Failed login attempts with no successful access", "rule": "Review and monitor unless other suspicious evidence exists"},
+    {"situation": "Failed logins followed by successful access from an unusual location", "rule": "Account verification is required"},
+    {"situation": "Login from a new device followed by normal activity", "rule": "User context must be reviewed before deciding whether to escalate"},
+    {"situation": "Suspicious executable blocked by endpoint protection", "rule": "Review whether any additional suspicious activity occurred"},
+    {"situation": "Sensitive files accessed by an unusual user or account", "rule": "Requires high-priority investigation"},
+    {"situation": "Large number of sensitive files downloaded unexpectedly", "rule": "Requires security team review"},
+    {"situation": "Suspicious email reported without interaction", "rule": "Record and investigate whether similar messages were received elsewhere"},
+    {"situation": "Similar suspicious emails received by multiple employees", "rule": "Requires broader investigation"},
+    {"situation": "Administrative account used outside normal working hours", "rule": "Check whether the activity matches approved on-call access"},
+    {"situation": "Unusual network traffic with a known business explanation", "rule": "The explanation should be recorded and considered in the final assessment"},
+    {"situation": "Evidence is incomplete or conflicting", "rule": "The system must not make a confident unsupported conclusion"},
+    {"situation": "Critical or High-risk recommendation", "rule": "Security personnel must review the case before any action is taken"}
+  ]
+}
