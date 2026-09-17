@@ -1,5 +1,7 @@
 import os
 import json
+import re
+import time
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, Optional
@@ -18,17 +20,71 @@ with open(DATA_PATH, "r") as f:
 _ALERTS_BY_ID = {a["id"]: a for a in DATASET["alerts"]}
 
 
-def get_llm() -> ChatOpenAI:
+def get_llm(model_name: Optional[str] = None) -> ChatOpenAI:
     """Lazy LLM init so importing this module (e.g. from Streamlit) doesn't
-    crash at import time if OPENAI_API_KEY isn't set yet — the error only
+    crash at import time if OPENROUTER_API_KEY isn't set yet — the error only
     surfaces when an investigation is actually run, with a clear message."""
-    if not os.getenv("OPENAI_API_KEY"):
+    if not os.getenv("OPENROUTER_API_KEY"):
         raise RuntimeError(
-            "OPENAI_API_KEY is not set. Export it before running an investigation, "
-            "e.g. `export OPENAI_API_KEY=sk-...`"
+            "OPENROUTER_API_KEY is not set. Export it before running an investigation, "
+            "e.g. `export OPENROUTER_API_KEY=sk-or-v1-...`"
         )
-    model_name = os.getenv("SECURENET_MODEL", "gpt-4o-mini")
-    return ChatOpenAI(model=model_name, temperature=0)
+    model_name = model_name or os.getenv("SECURENET_MODEL", "nvidia/nemotron-3-ultra-550b-a55b:free")
+    return ChatOpenAI(
+        model=model_name,
+        temperature=0,
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        base_url="https://openrouter.ai/api/v1",
+    )
+
+
+def fallback_models() -> list[str]:
+    configured = os.getenv("SECURENET_FALLBACK_MODELS")
+    if configured:
+        return [model.strip() for model in configured.split(",") if model.strip()]
+    return [
+        os.getenv("SECURENET_FALLBACK_MODEL", "google/gemma-4-31b-it:free"),
+        "google/gemma-4-26b-a4b-it:free",
+        "nvidia/nemotron-3-super-120b-a12b:free",
+    ]
+
+
+def invoke_with_fallback(prompt, request, output_schema=None):
+    models = [os.getenv("SECURENET_MODEL", "nvidia/nemotron-3-ultra-550b-a55b:free")]
+    models.extend(model for model in fallback_models() if model not in models)
+    errors = []
+    for model_name in models:
+        llm = get_llm(model_name)
+        for attempt in range(2):
+            try:
+                prompt_to_use = prompt
+                if output_schema is not None:
+                    prompt_to_use = prompt.partial(
+                        output_format=(
+                            "Return only one valid JSON object, with no Markdown or explanation, "
+                            f"matching this schema: {json.dumps(output_schema.model_json_schema())}"
+                        )
+                    )
+                result = (prompt_to_use | llm).invoke(request)
+                if result is None or not getattr(result, "content", None):
+                    raise ValueError("Model returned no output.")
+                if output_schema is not None:
+                    content = result.content.strip()
+                    fenced = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", content, re.DOTALL)
+                    if fenced:
+                        content = fenced.group(1)
+                    else:
+                        start, end = content.find("{"), content.rfind("}")
+                        if start < 0 or end <= start:
+                            raise ValueError("Model did not return a JSON object.")
+                        content = content[start:end + 1]
+                    result = output_schema.model_validate(json.loads(content))
+                return result
+            except Exception as error:
+                errors.append(f"{model_name}: {error}")
+                if attempt == 0:
+                    time.sleep(1)
+    raise RuntimeError("; ".join(errors))
 
 
 # --------------------------------------------------------------------------
@@ -126,17 +182,19 @@ def log_correlator_node(state: InvestigationState) -> Dict[str, Any]:
          "alert {alert_id}. Build a chronological timeline, determine whether a normal business "
          "explanation accounts for the activity (e.g. a scheduled backup), and rate evidence "
          "completeness as Complete, Incomplete, or Conflicting. Base every claim only on the logs "
-         "provided — do not assume events that are not in the log list."),
+         "provided — do not assume events that are not in the log list. {output_format}"),
         ("human", "Alert: {raw_alert}\nLogs: {logs}"),
     ])
 
-    structured_llm = get_llm().with_structured_output(LogEvidenceOutput)
-    chain = prompt | structured_llm
-    evidence = chain.invoke({
+    request = {
         "alert_id": state["alert_id"],
         "raw_alert": state["raw_alert"],
         "logs": state["logs"],
-    })
+    }
+    try:
+        evidence = invoke_with_fallback(prompt, request, LogEvidenceOutput)
+    except Exception as error:
+        return {"error": f"Evidence correlation (Agent 2) failed across available models: {error}"}
 
     return {"log_evidence": evidence.model_dump()}
 
@@ -159,20 +217,22 @@ def risk_evaluator_node(state: InvestigationState) -> Dict[str, Any]:
          "conditions, prefer a lower severity plus uncertainty_flag=true over a high-confidence guess.\n\n"
          "Severity definitions: {severity_reference}\n"
          "Risk factors to weigh: {risk_factors}\n"
-         "Company escalation rules: {rules}"),
+         "Company escalation rules: {rules}\n{output_format}"),
         ("human", "Alert: {raw_alert}\nTarget Context: {context}\nLog Evidence: {log_evidence}"),
     ])
 
-    structured_llm = get_llm().with_structured_output(RiskOutput)
-    chain = prompt | structured_llm
-    risk = chain.invoke({
-        "severity_reference": json.dumps(DATASET["severity_reference"]),
-        "risk_factors": json.dumps(DATASET["risk_factors"]),
-        "rules": json.dumps(DATASET["escalation_rules"]),
-        "raw_alert": state["raw_alert"],
-        "context": state["context"],
-        "log_evidence": state["log_evidence"],
-    })
+    request = {
+            "severity_reference": json.dumps(DATASET["severity_reference"]),
+            "risk_factors": json.dumps(DATASET["risk_factors"]),
+            "rules": json.dumps(DATASET["escalation_rules"]),
+            "raw_alert": state["raw_alert"],
+            "context": state["context"],
+            "log_evidence": state["log_evidence"],
+    }
+    try:
+        risk = invoke_with_fallback(prompt, request, RiskOutput)
+    except Exception as error:
+        return {"error": f"Risk evaluation (Agent 3) failed across available models: {error}"}
 
     return {"risk_evaluation": risk.model_dump()}
 
@@ -211,10 +271,14 @@ def summary_node(state: InvestigationState) -> Dict[str, Any]:
         ("human",
          "Alert: {raw_alert}\nContext: {context}\nEvidence: {evidence}\nRisk Evaluation: {risk}"),
     ])
-    narrative_llm = get_llm()
-    narrative = (prompt | narrative_llm).invoke({
-        "raw_alert": alert, "context": context, "evidence": evidence, "risk": risk,
-    }).content
+    try:
+        narrative = invoke_with_fallback(prompt, {
+            "raw_alert": alert, "context": context, "evidence": evidence, "risk": risk,
+        }).content
+        if not narrative:
+            raise ValueError("Model returned an empty narrative.")
+    except Exception as error:
+        return {"error": f"Report writing (Agent 4) failed across available models: {error}"}
 
     report = ReportOutput(
         investigation_summary=narrative,

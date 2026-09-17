@@ -1,0 +1,97 @@
+SecureNet SOC - Analysis Results for All 12 Alerts
+====================================================
+Generated from data.json and the company escalation rules.
+Analysis is recommendation-only; a human analyst must approve any action.
+
+Alert A001 - Authentication - ram.shrestha
+Severity: Medium
+Human review required: Yes
+Recommended action: Request More Information / Verify Account
+Evidence: L001-L005
+Analysis: Three failed logins were followed by a successful login from a new location, outside the user's stated 09:00-18:00 working hours. Normal project-document access followed. The sequence matches the unusual-location escalation rule, but the available logs do not confirm whether the location was expected, so the conclusion is provisional.
+
+Alert A002 - Authentication - mina.karki
+Severity: Medium
+Human review required: Yes
+Recommended action: Investigate / Verify Account
+Evidence: L006-L007
+Analysis: The user logged in from a previously unseen device and then accessed normal work applications. The activity matches the new-device rule. Because the account has Sensitive HR Access, user context should be reviewed before escalation.
+
+Alert A003 - Endpoint - FIN-LAP-07
+Severity: Medium
+Human review required: Yes
+Recommended action: Investigate
+Evidence: L008-L010
+Analysis: An unknown executable attempted to start on a confidential finance laptop and was blocked by endpoint protection. No further unusual activity was observed. The block reduced immediate impact, but the executable and endpoint telemetry should be reviewed for additional activity.
+
+Alert A004 - Data Access - shared-finance-drive
+Severity: High
+Human review required: Yes
+Recommended action: Escalate to Security Team
+Evidence: L011-L012
+Analysis: Forty-two finance files were opened within five minutes and additional files were downloaded. The target is a confidential shared finance drive. This matches the rule for large-scale sensitive-file access and requires security-team review.
+
+Alert A005 - Authentication - hari.rai
+Severity: Low
+Human review required: False
+Recommended action: Monitor
+Evidence: L013-L015
+Analysis: Five failed login attempts were recorded, with no successful access and no subsequent activity. This matches the failed-login rule. Continue monitoring unless other suspicious evidence appears.
+
+Alert A006 - Email - sita.thapa
+Severity: Low
+Human review required: False
+Recommended action: Investigate
+Evidence: L016-L017
+Analysis: A suspicious account-verification email was reported, and the user did not open the link. The event should be recorded and checked against similar messages, but the available evidence shows no link interaction.
+
+Alert A007 - Network - WEB-SRV-01
+Severity: Low
+Human review required: False
+Recommended action: Monitor
+Evidence: L018-L019
+Analysis: Outbound traffic increased above normal levels while a scheduled backup job was running. The backup is a plausible business explanation. Record the explanation and verify that the traffic matches the approved backup activity.
+
+Alert A008 - Account Activity - admin.ops
+Severity: High
+Human review required: Yes
+Recommended action: Escalate to Security Team
+Evidence: L020-L021
+Analysis: An administrative account accessed configuration pages outside normal hours. On-call access is permitted, so authorization must be checked before concluding misuse. Because the account is administrative and the activity is sensitive, security personnel must review it.
+
+Alert A009 - Endpoint - HR-LAP-03
+Severity: High
+Human review required: Yes
+Recommended action: Escalate to Security Team
+Evidence: L022-L023
+Analysis: Multiple attempts were made to access restricted finance folders from an HR laptop containing confidential employee information. The repeated denied access indicates suspicious activity and requires high-priority investigation.
+
+Alert A010 - Email - support@securenet.demo
+Severity: Medium
+Human review required: Yes
+Recommended action: Investigate
+Evidence: L024
+Analysis: Similar suspicious messages were received by multiple employees. This matches the broader-investigation rule. The available log is limited, so message samples, recipients, indicators, and delivery scope should be collected.
+
+Alert A011 - Authentication - bikash.lama
+Severity: Low
+Human review required: False
+Recommended action: Monitor
+Evidence: L025-L026
+Analysis: Two failed password attempts were followed by a successful login from a known office device during the user's working hours. The known device and normal timing provide a benign explanation; continue monitoring.
+
+Alert A012 - Data Access - HR-SharedDrive
+Severity: High
+Human review required: Yes
+Recommended action: Escalate to Security Team
+Evidence: L027-L028
+Analysis: A non-HR account accessed an employee-record folder and downloaded three files. The target contains confidential employee information. This matches the sensitive-file access rule and requires security-team review.
+
+Summary
+=======
+Alerts analyzed: 12
+High severity: A004, A008, A009, A012
+Medium severity: A001, A002, A003, A010
+Low severity: A005, A006, A007, A011
+Mandatory human review: A001, A002, A003, A004, A008, A009, A010, A012
+No automated security action is authorized by this report.
